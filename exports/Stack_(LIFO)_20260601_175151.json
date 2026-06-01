@@ -1,0 +1,26 @@
+{
+    "arrayValues": [
+    ],
+    "comparisons": 0,
+    "description": "Pop uklanja zadnji ubaceni element.",
+    "linkedListValues": [
+    ],
+    "mode": "Data Structures",
+    "queueValues": [
+    ],
+    "rows": [
+        "pop() returns 30",
+        "top = 20"
+    ],
+    "scenario": "Stack (LIFO)",
+    "screenshot": "C:/Users/Stjepan/C++ Memory & Algorithm Visualizer/exports/Stack_(LIFO)_20260601_175151.png",
+    "stackValues": [
+        10,
+        20
+    ],
+    "step": 3,
+    "swaps": 0,
+    "timestamp": "2026-06-01T17:51:51",
+    "title": "Stack (LIFO)",
+    "totalSteps": 3
+}

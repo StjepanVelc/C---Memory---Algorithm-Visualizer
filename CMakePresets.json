@@ -1,0 +1,50 @@
+{
+    "version": 5,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 21,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "windows-debug",
+            "displayName": "Windows Debug",
+            "description": "Configure debug build with Visual Studio 2022 x64",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/msvc-debug",
+            "architecture": {
+                "value": "x64",
+                "strategy": "set"
+            },
+            "cacheVariables": {
+                "CMAKE_CONFIGURATION_TYPES": "Debug"
+            }
+        },
+        {
+            "name": "windows-release",
+            "displayName": "Windows Release",
+            "description": "Configure release build with Visual Studio 2022 x64",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/msvc-release",
+            "architecture": {
+                "value": "x64",
+                "strategy": "set"
+            },
+            "cacheVariables": {
+                "CMAKE_CONFIGURATION_TYPES": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "build-debug",
+            "configurePreset": "windows-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "build-release",
+            "configurePreset": "windows-release",
+            "configuration": "Release"
+        }
+    ]
+}
