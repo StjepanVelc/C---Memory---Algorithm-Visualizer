@@ -1,5 +1,9 @@
 #include "memory/MemorySimulator.h"
 
+#include <algorithm>
+
+#include "core/I18nKey.h"
+
 namespace
 {
     SimulationFrame makeMemoryFrame(const QString &title,
@@ -17,9 +21,14 @@ namespace
         frame.pointerLinks = pointerLinks;
         return frame;
     }
+
+    QString k(const QString &key, const QStringList &args = {})
+    {
+        return i18nkey::make(key, args);
+    }
 } // namespace
 
-FrameSequence MemorySimulator::generate(Scenario scenario)
+FrameSequence MemorySimulator::generate(Scenario scenario, const UserScenarioConfig &config)
 {
     switch (scenario)
     {
@@ -157,6 +166,12 @@ FrameSequence MemorySimulator::generate(Scenario scenario)
 
     case Scenario::LinkedList:
     {
+        const int insertIndex = std::max(0, config.insertIndex);
+        const int insertValue = config.insertValue == 0 ? 25 : config.insertValue;
+        const int deleteIndex = std::max(0, config.deleteIndex);
+
+        std::vector<int> linked = {10, 20, 30};
+
         SimulationFrame step1 = makeMemoryFrame("Linked List",
                                                 "Pocetno stanje liste i head pointera.",
                                                 {"Node(10) -> Node(20) -> Node(30)",
@@ -174,56 +189,84 @@ FrameSequence MemorySimulator::generate(Scenario scenario)
                                                 "Traverse ide na sljedeci cvor preko next pointera.",
                                                 {"curr = curr->next", "curr now points to value 20"},
                                                 2,
-                                                5,
+                                                6,
                                                 {{"head", "0x00D01000", "0x0012FA10", false, false},
                                                  {"curr", "0x00D01030", "0x0012FA18", true, false}},
                                                 {},
                                                 {});
-        step2.linkedListValues = {10, 20, 30};
+        step2.linkedListValues = linked;
         step2.linkedListAddresses = {"0x00D01000", "0x00D01030", "0x00D01060"};
         step2.linkedListHighlight = 1;
 
+        const int safeInsertIndex = std::min(insertIndex, static_cast<int>(linked.size()));
+        linked.insert(linked.begin() + safeInsertIndex, insertValue);
+
         SimulationFrame step3 = makeMemoryFrame("Linked List",
-                                                "Insert iza cvora 20 ubacuje novi cvor 25.",
-                                                {"newNode->next = curr->next", "curr->next = newNode"},
+                                                "Insert at index ubacuje cvor na trazenu poziciju.",
+                                                {k("mem.linkedList.insertAt", {QString::number(safeInsertIndex), QString::number(insertValue)}),
+                                                 k("mem.linkedList.linksUpdated")},
                                                 3,
-                                                5,
+                                                6,
                                                 {{"head", "0x00D01000", "0x0012FA10", false, false},
                                                  {"curr", "0x00D01030", "0x0012FA18", true, false},
                                                  {"newNode", "0x00D01045", "0x0012FA28", true, false}},
                                                 {},
                                                 {});
-        step3.linkedListValues = {10, 20, 25, 30};
+        step3.linkedListValues = linked;
         step3.linkedListAddresses = {"0x00D01000", "0x00D01030", "0x00D01045", "0x00D01060"};
-        step3.linkedListHighlight = 2;
+        step3.linkedListHighlight = safeInsertIndex;
+
+        const int safeDeleteIndex = linked.empty() ? -1 : std::min(deleteIndex, static_cast<int>(linked.size()) - 1);
 
         SimulationFrame step4 = makeMemoryFrame("Linked List",
-                                                "Delete cvora 25 prespaja listu i oslobadja cvor.",
-                                                {"curr->next = node25->next", "delete node25"},
+                                                "Delete at index uklanja cvor i prespaja listu.",
+                                                {safeDeleteIndex >= 0
+                                                     ? k("mem.linkedList.deleteAt", {QString::number(safeDeleteIndex)})
+                                                     : k("mem.linkedList.deleteSkipped"),
+                                                 k("mem.linkedList.rewired")},
                                                 4,
-                                                5,
+                                                6,
                                                 {{"head", "0x00D01000", "0x0012FA10", false, false},
                                                  {"curr", "0x00D01030", "0x0012FA18", true, false}},
                                                 {},
                                                 {});
-        step4.linkedListValues = {10, 20, 30};
+
+        if (safeDeleteIndex >= 0)
+        {
+            linked.erase(linked.begin() + safeDeleteIndex);
+        }
+
+        step4.linkedListValues = linked;
         step4.linkedListAddresses = {"0x00D01000", "0x00D01030", "0x00D01060"};
-        step4.linkedListHighlight = 1;
+        step4.linkedListHighlight = std::max(0, safeDeleteIndex - 1);
 
         SimulationFrame step5 = makeMemoryFrame("Linked List",
                                                 "Insert na rep dodaje novi cvor i veze ga s prethodnim.",
                                                 {"tail->next = new Node(40)", "Node(40) appended"},
                                                 5,
-                                                5,
+                                                6,
                                                 {{"head", "0x00D01000", "0x0012FA10", false, false},
                                                  {"tail", "0x00D01090", "0x0012FA20", true, false}},
                                                 {},
                                                 {});
-        step5.linkedListValues = {10, 20, 30, 40};
+        linked.push_back(40);
+        step5.linkedListValues = linked;
         step5.linkedListAddresses = {"0x00D01000", "0x00D01030", "0x00D01060", "0x00D01090"};
         step5.linkedListHighlight = 3;
 
-        return {step1, step2, step3, step4, step5};
+        SimulationFrame step6 = makeMemoryFrame("Linked List",
+                                                "Rezultat nakon index operacija.",
+                                                {"insert/delete at index completed", "Ready for next run"},
+                                                6,
+                                                6,
+                                                {{"head", "0x00D01000", "0x0012FA10", true, false}},
+                                                {},
+                                                {});
+        step6.linkedListValues = linked;
+        step6.linkedListAddresses = step5.linkedListAddresses;
+        step6.linkedListHighlight = 0;
+
+        return {step1, step2, step3, step4, step5, step6};
     }
 
     case Scenario::NewDelete:
