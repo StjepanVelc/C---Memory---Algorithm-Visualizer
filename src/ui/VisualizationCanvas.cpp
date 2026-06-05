@@ -74,6 +74,8 @@ void VisualizationCanvas::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
+    m_profiler.restart();
+
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.fillRect(rect(), QColor("#0f172a"));
@@ -100,12 +102,62 @@ void VisualizationCanvas::paintEvent(QPaintEvent *event)
         drawLinkedListView(painter, content);
     }
 
+    if (!m_frame.graphNodes.empty())
+    {
+        drawGraphView(painter, content);
+    }
+
     if (!m_frame.threadStates.empty())
     {
         drawConcurrencyView(painter, content);
     }
 
     drawLegend(painter, content);
+    m_lastPaintMs = static_cast<double>(m_profiler.nsecsElapsed()) / 1000000.0;
+    drawProfilingOverlay(painter, content);
+}
+
+void VisualizationCanvas::drawGraphView(QPainter &painter, const QRect &rect) const
+{
+    Q_UNUSED(rect);
+
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setPen(QPen(QColor("#38bdf8"), 2));
+
+    for (const auto &edge : m_frame.graphEdges)
+    {
+        if (edge.from < 0 || edge.to < 0 ||
+            edge.from >= static_cast<int>(m_frame.graphNodes.size()) ||
+            edge.to >= static_cast<int>(m_frame.graphNodes.size()))
+        {
+            continue;
+        }
+
+        const auto &a = m_frame.graphNodes[static_cast<std::size_t>(edge.from)];
+        const auto &b = m_frame.graphNodes[static_cast<std::size_t>(edge.to)];
+        painter.drawLine(QPoint(a.x, a.y), QPoint(b.x, b.y));
+    }
+
+    for (const auto &node : m_frame.graphNodes)
+    {
+        QRect circle(node.x - 24, node.y - 24, 48, 48);
+        QColor fill = QColor("#334155");
+        if (node.visited)
+        {
+            fill = QColor("#16a34a");
+        }
+        if (node.active)
+        {
+            fill = QColor("#f59e0b");
+        }
+
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(fill);
+        painter.drawEllipse(circle);
+
+        painter.setPen(Qt::white);
+        painter.drawText(circle, Qt::AlignCenter, node.label);
+    }
 }
 
 void VisualizationCanvas::drawStackQueueView(QPainter &painter, const QRect &rect) const
@@ -593,6 +645,29 @@ void VisualizationCanvas::drawLegend(QPainter &painter, const QRect &rect) const
     painter.drawRoundedRect(statusBadge, 10, 10);
     painter.setPen(Qt::white);
     painter.drawText(statusBadge, Qt::AlignCenter, m_pointerAnimationEnabled ? "Pointer animation: ON" : "Pointer animation: OFF");
+}
+
+void VisualizationCanvas::drawProfilingOverlay(QPainter &painter, const QRect &rect) const
+{
+    const int boxWidth = 270;
+    const int boxHeight = 58;
+    const QRect box(rect.left() + 8, rect.top() + 8, boxWidth, boxHeight);
+
+    int logicalItems = static_cast<int>(m_frame.arrayValues.size() +
+                                        m_frame.stackCells.size() + m_frame.heapCells.size() +
+                                        m_frame.stackValues.size() + m_frame.queueValues.size() +
+                                        m_frame.linkedListValues.size() + m_frame.graphNodes.size() +
+                                        m_frame.threadStates.size());
+    const double animationCost = (1.0 - m_transitionProgress) * 100.0;
+
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(QColor(2, 6, 23, 210));
+    painter.drawRoundedRect(box, 8, 8);
+    painter.setPen(QColor("#cbd5e1"));
+    painter.drawText(box.adjusted(10, 8, -10, -30), Qt::AlignLeft,
+                     QString("Frame: %1 ms  |  Anim: %2%").arg(QString::number(m_lastPaintMs, 'f', 2), QString::number(animationCost, 'f', 0)));
+    painter.drawText(box.adjusted(10, 30, -10, -8), Qt::AlignLeft,
+                     QString("Approx visual items: %1").arg(logicalItems));
 }
 
 void VisualizationCanvas::onTransitionTick()

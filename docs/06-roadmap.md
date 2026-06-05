@@ -1,22 +1,26 @@
 # Roadmap
 
-## Kratkorocno (1-2 iteracije)
+## Status Implementacije
 
-1. Dodati mode-aware tooltips i mini tutorijal overlay.
-2. Dodati jednostavne unit testove za simulacijske generatore.
-3. Dodati Open Exports Folder feedback u status baru.
+### Zavrseno
 
-## Srednjorocno (3-5 iteracija)
+1. Mode-aware tooltips i mini tutorijal overlay.
+2. Unit test target (`SimulatorTests`) + CTest integracija.
+3. Open Exports Folder feedback u status baru.
+4. Linked-list insert/delete at index.
+5. Graph traversal modul (BFS).
+6. Reproducibilni JSON presets.
+7. Session recording + replay timeline.
+8. Profiling overlay.
+9. UI + frame text lokalizacija (hr/en).
+10. MainWindow arhitekturno razdvajanje na manje implementacijske cjeline.
 
-1. Dodati naprednije linked-list operacije (insert at index, delete at index).
-2. Dodati BST/AVL ili graph traversal module.
-3. Uvesti reproducibilne scenario presets iz JSON datoteka.
+## Sljedece Profesionalne Iteracije
 
-## Dugorocno
-
-1. Session recording i replay timeline.
-2. Profiling overlay (frame time, animation cost, memory usage).
-3. Lokalizacija UI-a (hr/en) uz resources datoteke.
+1. Dodati dedicated timeline scrubber (slider + event filtering po tipu).
+2. Prosiriti i18n coverage na sve dinamicne row poruke kroz key-based generator API.
+3. Uvesti CI pipeline za automatski build + test + artifact upload.
+4. Dodati property-based testove za simulator edge-case kombinacije.
 
 ## Kriteriji Kvalitete
 

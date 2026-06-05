@@ -1,39 +1,48 @@
-# Dokumentacija Projekta
+# Documentation Index / Indeks Dokumentacije
 
-Ovaj direktorij sadrzi tehnicku dokumentaciju za C++ Memory & Algorithm Visualizer.
+## EN
 
-## Sadrzaj
+This folder contains the technical documentation for C++ Memory & Algorithm Visualizer.
 
-1. `docs/01-architecture.md`
-   - Arhitektura aplikacije, slojevi i odgovornosti.
-2. `docs/02-module-map.md`
-   - Pregled svih modula (`core`, `ui`, `memory`, `algorithms`, `concurrency`) i njihovih API granica.
-3. `docs/03-data-flow.md`
-   - Kako podaci putuju od scenarija do renderiranja.
-4. `docs/04-build-run-deploy.md`
-   - Build, run i deploy workflow za Windows + Qt.
-5. `docs/05-export-spec.md`
-   - Specifikacija export mehanizma (JSON + PNG).
-6. `docs/06-roadmap.md`
-   - Daljnji razvojni plan i prioriteti.
+### Contents
 
-## Brzi Start
+1. docs/01-architecture.md
+   Architecture, layers, responsibilities, and MainWindow split strategy.
+2. docs/02-module-map.md
+   Module map for core, ui, algorithms, memory, and concurrency.
+3. docs/03-data-flow.md
+   End-to-end flow: scenario selection, frame generation, rendering, recording, replay timeline.
+4. docs/04-build-run-deploy.md
+   Build/run/deploy workflow for Windows + Qt (MSVC kit).
+5. docs/05-export-spec.md
+   JSON + PNG export format and behavior.
+6. docs/06-roadmap.md
+   Implementation status and future roadmap.
 
-1. Konfiguriraj Qt putanju:
+### Quick Start
 
 ```powershell
 $env:CMAKE_PREFIX_PATH = "C:/Qt/6.11.1/msvc2022_64"
-```
-
-2. Konfiguriraj i buildaj:
-
-```powershell
 cmake --preset windows-debug
 cmake --build --preset build-debug
-```
-
-3. Pokreni aplikaciju:
-
-```powershell
 .\build\msvc-debug\Debug\CppMemoryAlgorithmVisualizer.exe
 ```
+
+## HR
+
+Ovaj direktorij sadrzi tehnicku dokumentaciju za C++ Memory & Algorithm Visualizer.
+
+### Sadrzaj
+
+1. docs/01-architecture.md
+   Arhitektura, slojevi odgovornosti i strategija razdvajanja MainWindow komponente.
+2. docs/02-module-map.md
+   Mapa modula core, ui, algorithms, memory i concurrency.
+3. docs/03-data-flow.md
+   Tok podataka od odabira scenarija do rendera, snimanja i replay timeline prikaza.
+4. docs/04-build-run-deploy.md
+   Build/run/deploy workflow za Windows + Qt (MSVC kit).
+5. docs/05-export-spec.md
+   Specifikacija JSON + PNG izvoza.
+6. docs/06-roadmap.md
+   Status implementacije i daljnji plan razvoja.

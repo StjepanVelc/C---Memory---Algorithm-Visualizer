@@ -16,11 +16,21 @@ void SimulationEngine::setScenario(Scenario scenario)
     m_scenario = scenario;
     m_frames = buildFrames(scenario);
     m_index = 0;
+    pushRecordingEvent("set-scenario");
+}
+
+void SimulationEngine::setUserConfig(const UserScenarioConfig &config)
+{
+    m_userConfig = config;
+    m_frames = buildFrames(m_scenario);
+    m_index = 0;
+    pushRecordingEvent("set-config");
 }
 
 void SimulationEngine::reset()
 {
     m_index = 0;
+    pushRecordingEvent("reset");
 }
 
 void SimulationEngine::stepForward()
@@ -30,6 +40,7 @@ void SimulationEngine::stepForward()
         return;
     }
     m_index = std::min(m_index + 1, m_frames.size() - 1);
+    pushRecordingEvent("step-forward");
 }
 
 void SimulationEngine::stepBackward()
@@ -39,6 +50,44 @@ void SimulationEngine::stepBackward()
         return;
     }
     --m_index;
+    pushRecordingEvent("step-backward");
+}
+
+void SimulationEngine::jumpToFrame(int index)
+{
+    if (m_frames.empty())
+    {
+        return;
+    }
+
+    if (index < 0)
+    {
+        m_index = 0;
+    }
+    else
+    {
+        m_index = std::min(static_cast<std::size_t>(index), m_frames.size() - 1);
+    }
+    pushRecordingEvent("jump-frame");
+}
+
+void SimulationEngine::beginRecording()
+{
+    m_recordingEvents.clear();
+    m_recordingTimer.restart();
+    m_isRecording = true;
+    pushRecordingEvent("recording-start");
+}
+
+void SimulationEngine::endRecording()
+{
+    pushRecordingEvent("recording-stop");
+    m_isRecording = false;
+}
+
+bool SimulationEngine::isRecording() const
+{
+    return m_isRecording;
 }
 
 const SimulationFrame &SimulationEngine::currentFrame() const
@@ -65,6 +114,37 @@ Scenario SimulationEngine::currentScenario() const
     return m_scenario;
 }
 
+int SimulationEngine::currentFrameIndex() const
+{
+    return static_cast<int>(m_index);
+}
+
+int SimulationEngine::frameCount() const
+{
+    return static_cast<int>(m_frames.size());
+}
+
+const std::vector<RecordingEvent> &SimulationEngine::recordingEvents() const
+{
+    return m_recordingEvents;
+}
+
+const UserScenarioConfig &SimulationEngine::userConfig() const
+{
+    return m_userConfig;
+}
+
+void SimulationEngine::pushRecordingEvent(const QString &action)
+{
+    if (!m_isRecording)
+    {
+        return;
+    }
+
+    m_recordingEvents.push_back(
+        RecordingEvent{static_cast<int>(m_index), action, m_recordingTimer.elapsed()});
+}
+
 FrameSequence SimulationEngine::buildFrames(Scenario scenario) const
 {
     switch (scenario)
@@ -74,7 +154,8 @@ FrameSequence SimulationEngine::buildFrames(Scenario scenario) const
     case Scenario::BubbleSort:
     case Scenario::SelectionSort:
     case Scenario::InsertionSort:
-        return AlgorithmSimulator::generate(scenario);
+    case Scenario::GraphBfs:
+        return AlgorithmSimulator::generate(scenario, m_userConfig);
 
     case Scenario::StackMemory:
     case Scenario::HeapMemory:
@@ -84,11 +165,11 @@ FrameSequence SimulationEngine::buildFrames(Scenario scenario) const
     case Scenario::NewDelete:
     case Scenario::UniquePtr:
     case Scenario::CopyMove:
-        return MemorySimulator::generate(scenario);
+        return MemorySimulator::generate(scenario, m_userConfig);
 
     case Scenario::ThreadMutex:
     case Scenario::RaceCondition:
-        return ConcurrencySimulator::generate(scenario);
+        return ConcurrencySimulator::generate(scenario, m_userConfig);
     }
 
     return {};

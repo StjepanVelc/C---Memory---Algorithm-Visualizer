@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QElapsedTimer>
 #include <QTimer>
 #include <QWidget>
 
@@ -23,8 +24,10 @@ private:
     void drawMemoryView(QPainter &painter, const QRect &rect) const;
     void drawStackQueueView(QPainter &painter, const QRect &rect) const;
     void drawLinkedListView(QPainter &painter, const QRect &rect) const;
+    void drawGraphView(QPainter &painter, const QRect &rect) const;
     void drawConcurrencyView(QPainter &painter, const QRect &rect) const;
     void drawLegend(QPainter &painter, const QRect &rect) const;
+    void drawProfilingOverlay(QPainter &painter, const QRect &rect) const;
 
     void onTransitionTick();
 
@@ -33,4 +36,6 @@ private:
     QTimer m_transitionTimer;
     double m_transitionProgress = 1.0;
     bool m_pointerAnimationEnabled = true;
+    mutable double m_lastPaintMs = 0.0;
+    mutable QElapsedTimer m_profiler;
 };

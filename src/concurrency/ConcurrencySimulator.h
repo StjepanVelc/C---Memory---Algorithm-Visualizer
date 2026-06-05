@@ -5,5 +5,5 @@
 class ConcurrencySimulator
 {
 public:
-    static FrameSequence generate(Scenario scenario);
+    static FrameSequence generate(Scenario scenario, const UserScenarioConfig &config);
 };

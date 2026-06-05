@@ -12,6 +12,13 @@
 2. `MainWindow::refreshView` cita `currentFrame()`.
 3. `VisualizationCanvas::setFrame` prima frame i pokrece tranzicijske animacije.
 
+## 2.1 Recording i Timeline Replay
+
+1. `Record Session` poziva `SimulationEngine::beginRecording`.
+2. Engine zapisuje evente (`frameIndex`, `action`, `timestampMs`) pri svakoj korisnickoj akciji.
+3. `MainWindow::refreshTimeline` puni timeline listu.
+4. Klik na timeline event radi `jumpToFrame(frameIndex)` i instant refresh prikaza.
+
 ## 3. Render Pipeline
 
 `paintEvent` renderira domene po prisutnim podacima u frameu:
@@ -27,3 +34,9 @@
 1. `Export JSON + PNG` gumb hvata screenshot canvasa.
 2. Frame metapodaci i vrijednosti serializiraju se u JSON.
 3. Datoteke se spremaju u `exports/` direktorij s timestamp nazivom.
+
+## 5. Lokalizacija Pipeline
+
+1. UI labels se ucitavaju iz `resources/i18n/{lang}.json`.
+2. Frame title/description/rows prolaze kroz `textMap` translaciju prije rendera.
+3. Timeline akcije (`set-scenario`, `step-forward`, ...) prikazuju se lokalizirano.

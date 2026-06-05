@@ -17,8 +17,10 @@ namespace
     }
 } // namespace
 
-FrameSequence ConcurrencySimulator::generate(Scenario scenario)
+FrameSequence ConcurrencySimulator::generate(Scenario scenario, const UserScenarioConfig &config)
 {
+    Q_UNUSED(config);
+
     switch (scenario)
     {
     case Scenario::ThreadMutex:

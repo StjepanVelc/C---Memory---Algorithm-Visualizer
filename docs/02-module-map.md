@@ -11,14 +11,25 @@
     - `stepBackward()`
     - `reset()`
     - `currentFrame()`
+- `PresetIO.h/.cpp`
+  - Stabilan JSON preset format i parsiranje (round-trip testirano).
 
 ## `src/ui`
 
-- `MainWindow.h/.cpp`
-  - Tabs, scenario selector, controls, autoplay, export.
+- `MainWindow.h`
+  - Deklaracija UI kontrola i slotova.
+- `MainWindow.cpp`
+  - Core konstruktor + playback slotovi.
+- `MainWindowUi.cpp`
+  - UI composition, refresh, mode tooltips, tutorial overlay, timeline list.
+- `MainWindowActions.cpp`
+  - Input apply, preset save/load, recording/replay, export, language handling.
+- `MainWindowSupport.h/.cpp`
+  - Shared helper funkcije (scenario lists, i18n load, path resolve).
 - `VisualizationCanvas.h/.cpp`
   - Drawing pipeline za algorithms, memory, data structures i concurrency.
   - Animacije pointera i linked-list tranzicija.
+  - Profiling overlay i graph traversal prikaz.
 
 ## `src/algorithms`
 
