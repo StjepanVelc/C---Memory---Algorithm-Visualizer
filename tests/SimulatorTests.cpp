@@ -80,6 +80,21 @@ int main()
         return 1;
     }
 
+    UserScenarioConfig userExample;
+    userExample.values = {20, 30, 10, 5, 3, 9, 8};
+    userExample.target = 5;
+    const auto linearUserExample = AlgorithmSimulator::generate(Scenario::LinearSearch, userExample);
+    if (linearUserExample.size() != 4)
+    {
+        std::cerr << "LinearSearch did not stop at expected target index for user example\n";
+        return 1;
+    }
+    if (linearUserExample.back().totalSteps != 7)
+    {
+        std::cerr << "LinearSearch total steps mismatch for user example\n";
+        return 1;
+    }
+
     std::cout << "Simulator tests passed\n";
     return 0;
 }

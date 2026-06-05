@@ -24,6 +24,7 @@ add_executable(CppMemoryAlgorithmVisualizer
     src/ui/MainWindow.h
     src/ui/MainWindow.cpp
     src/ui/MainWindowUi.cpp
+    src/ui/MainWindowTimeline.cpp
     src/ui/MainWindowActions.cpp
     src/ui/MainWindowPresetActions.cpp
     src/ui/MainWindowExportI18n.cpp
