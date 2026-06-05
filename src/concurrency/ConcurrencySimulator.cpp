@@ -1,7 +1,14 @@
 #include "concurrency/ConcurrencySimulator.h"
 
+#include "core/I18nKey.h"
+
 namespace
 {
+    QString k(const QString &key, const QStringList &args = {})
+    {
+        return i18nkey::make(key, args);
+    }
+
     SimulationFrame makeConcurrencyFrame(const QString &title,
                                          const QString &desc,
                                          const QStringList &rows,
@@ -25,51 +32,51 @@ FrameSequence ConcurrencySimulator::generate(Scenario scenario, const UserScenar
     {
     case Scenario::ThreadMutex:
         return {
-            makeConcurrencyFrame("Thread + Mutex",
-                                 "Dva threada pristupaju shared counteru.",
-                                 {"T1: lock(m)", "T1: counter++", "T2: waiting for mutex"},
+            makeConcurrencyFrame(k("con.threadMutex.title"),
+                                 k("con.threadMutex.desc1"),
+                                 {k("con.threadMutex.row1"), k("con.threadMutex.row2"), k("con.threadMutex.row3")},
                                  1,
                                  3,
-                                 {{"T1", "running (in critical section)", true}, {"T2", "waiting for mutex", false}},
-                                 "T1"),
-            makeConcurrencyFrame("Thread + Mutex",
-                                 "Mutex osigurava serializiran pristup.",
-                                 {"T1: unlock(m)", "T2: lock(m)", "T2: counter++"},
+                                 {{k("con.thread.t1"), k("con.state.runningCs"), true}, {k("con.thread.t2"), k("con.state.waitingMutex"), false}},
+                                 k("con.thread.t1")),
+            makeConcurrencyFrame(k("con.threadMutex.title"),
+                                 k("con.threadMutex.desc2"),
+                                 {k("con.threadMutex.row4"), k("con.threadMutex.row5"), k("con.threadMutex.row6")},
                                  2,
                                  3,
-                                 {{"T1", "ready", false}, {"T2", "running (in critical section)", true}},
-                                 "T2"),
-            makeConcurrencyFrame("Thread + Mutex",
-                                 "Krajnje stanje je konzistentno.",
-                                 {"counter == 2", "No race condition"},
+                                 {{k("con.thread.t1"), k("con.state.ready"), false}, {k("con.thread.t2"), k("con.state.runningCs"), true}},
+                                 k("con.thread.t2")),
+            makeConcurrencyFrame(k("con.threadMutex.title"),
+                                 k("con.threadMutex.desc3"),
+                                 {k("con.threadMutex.row7"), k("con.threadMutex.row8")},
                                  3,
                                  3,
-                                 {{"T1", "finished", false}, {"T2", "finished", false}},
-                                 "none")};
+                                 {{k("con.thread.t1"), k("con.state.finished"), false}, {k("con.thread.t2"), k("con.state.finished"), false}},
+                                 k("con.none"))};
 
     case Scenario::RaceCondition:
         return {
-            makeConcurrencyFrame("Race Condition",
-                                 "Bez mutexa inkrement nije atomic.",
-                                 {"T1 reads counter=0", "T2 reads counter=0"},
+            makeConcurrencyFrame(k("con.race.title"),
+                                 k("con.race.desc1"),
+                                 {k("con.race.row1"), k("con.race.row2")},
                                  1,
                                  3,
-                                 {{"T1", "running", true}, {"T2", "running", true}},
-                                 "none"),
-            makeConcurrencyFrame("Race Condition",
-                                 "Oba threada pisu staru bazu +1.",
-                                 {"T1 writes 1", "T2 writes 1", "lost update"},
+                                 {{k("con.thread.t1"), k("con.state.running"), true}, {k("con.thread.t2"), k("con.state.running"), true}},
+                                 k("con.none")),
+            makeConcurrencyFrame(k("con.race.title"),
+                                 k("con.race.desc2"),
+                                 {k("con.race.row3"), k("con.race.row4"), k("con.race.row5")},
                                  2,
                                  3,
-                                 {{"T1", "writing shared value", true}, {"T2", "writing shared value", true}},
-                                 "none"),
-            makeConcurrencyFrame("Race Condition",
-                                 "Rezultat je nekonzistentan.",
-                                 {"Expected 2, got 1", "Need mutex/atomic"},
+                                 {{k("con.thread.t1"), k("con.state.writingShared"), true}, {k("con.thread.t2"), k("con.state.writingShared"), true}},
+                                 k("con.none")),
+            makeConcurrencyFrame(k("con.race.title"),
+                                 k("con.race.desc3"),
+                                 {k("con.race.row6"), k("con.race.row7")},
                                  3,
                                  3,
-                                 {{"T1", "finished", false}, {"T2", "finished", false}},
-                                 "none")};
+                                 {{k("con.thread.t1"), k("con.state.finished"), false}, {k("con.thread.t2"), k("con.state.finished"), false}},
+                                 k("con.none"))};
 
     default:
         return {};

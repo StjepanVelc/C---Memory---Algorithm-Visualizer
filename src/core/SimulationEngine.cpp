@@ -4,6 +4,7 @@
 
 #include "algorithms/AlgorithmSimulator.h"
 #include "concurrency/ConcurrencySimulator.h"
+#include "core/I18nKey.h"
 #include "memory/MemorySimulator.h"
 
 SimulationEngine::SimulationEngine()
@@ -16,7 +17,7 @@ void SimulationEngine::setScenario(Scenario scenario)
     m_scenario = scenario;
     m_frames = buildFrames(scenario);
     m_index = 0;
-    pushRecordingEvent("set-scenario");
+    pushRecordingEvent(i18nkey::make("event.setScenario"));
 }
 
 void SimulationEngine::setUserConfig(const UserScenarioConfig &config)
@@ -24,13 +25,13 @@ void SimulationEngine::setUserConfig(const UserScenarioConfig &config)
     m_userConfig = config;
     m_frames = buildFrames(m_scenario);
     m_index = 0;
-    pushRecordingEvent("set-config");
+    pushRecordingEvent(i18nkey::make("event.setConfig"));
 }
 
 void SimulationEngine::reset()
 {
     m_index = 0;
-    pushRecordingEvent("reset");
+    pushRecordingEvent(i18nkey::make("event.reset"));
 }
 
 void SimulationEngine::stepForward()
@@ -40,7 +41,7 @@ void SimulationEngine::stepForward()
         return;
     }
     m_index = std::min(m_index + 1, m_frames.size() - 1);
-    pushRecordingEvent("step-forward");
+    pushRecordingEvent(i18nkey::make("event.stepForward"));
 }
 
 void SimulationEngine::stepBackward()
@@ -50,7 +51,7 @@ void SimulationEngine::stepBackward()
         return;
     }
     --m_index;
-    pushRecordingEvent("step-backward");
+    pushRecordingEvent(i18nkey::make("event.stepBackward"));
 }
 
 void SimulationEngine::jumpToFrame(int index)
@@ -68,7 +69,7 @@ void SimulationEngine::jumpToFrame(int index)
     {
         m_index = std::min(static_cast<std::size_t>(index), m_frames.size() - 1);
     }
-    pushRecordingEvent("jump-frame");
+    pushRecordingEvent(i18nkey::make("event.jumpFrame"));
 }
 
 void SimulationEngine::beginRecording()
@@ -76,12 +77,12 @@ void SimulationEngine::beginRecording()
     m_recordingEvents.clear();
     m_recordingTimer.restart();
     m_isRecording = true;
-    pushRecordingEvent("recording-start");
+    pushRecordingEvent(i18nkey::make("event.recordingStart"));
 }
 
 void SimulationEngine::endRecording()
 {
-    pushRecordingEvent("recording-stop");
+    pushRecordingEvent(i18nkey::make("event.recordingStop"));
     m_isRecording = false;
 }
 

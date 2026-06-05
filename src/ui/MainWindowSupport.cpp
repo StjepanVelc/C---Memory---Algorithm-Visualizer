@@ -5,38 +5,45 @@
 #include <QJsonDocument>
 #include <QStringList>
 
+#include "core/I18nKey.h"
+
 namespace ui::mainwindow
 {
+    QString keyText(const QString &key)
+    {
+        return i18nkey::make(key);
+    }
+
     QList<ScenarioItem> algorithmItems()
     {
-        return {{"Linear Search", Scenario::LinearSearch},
-                {"Binary Search", Scenario::BinarySearch},
-                {"Bubble Sort", Scenario::BubbleSort},
-                {"Selection Sort", Scenario::SelectionSort},
-                {"Insertion Sort", Scenario::InsertionSort},
-                {"Graph BFS", Scenario::GraphBfs}};
+        return {{keyText("alg.linear.title"), Scenario::LinearSearch},
+                {keyText("alg.binary.title"), Scenario::BinarySearch},
+                {keyText("alg.bubble.title"), Scenario::BubbleSort},
+                {keyText("alg.selection.title"), Scenario::SelectionSort},
+                {keyText("alg.insertion.title"), Scenario::InsertionSort},
+                {keyText("alg.graphBfs.title"), Scenario::GraphBfs}};
     }
 
     QList<ScenarioItem> memoryItems()
     {
-        return {{"Stack Variables", Scenario::StackMemory},
-                {"Heap Objects", Scenario::HeapMemory},
-                {"new/delete", Scenario::NewDelete},
-                {"unique_ptr", Scenario::UniquePtr},
-                {"copy vs move", Scenario::CopyMove}};
+        return {{keyText("mem.stackVars.title"), Scenario::StackMemory},
+                {keyText("mem.heapObjects.title"), Scenario::HeapMemory},
+                {keyText("mem.newDelete.title"), Scenario::NewDelete},
+                {keyText("mem.uniquePtr.title"), Scenario::UniquePtr},
+                {keyText("mem.copyMove.title"), Scenario::CopyMove}};
     }
 
     QList<ScenarioItem> dataStructureItems()
     {
-        return {{"Stack (LIFO)", Scenario::StackDs},
-                {"Queue (FIFO)", Scenario::QueueDs},
-                {"Linked List", Scenario::LinkedList}};
+        return {{keyText("mem.stackDs.title"), Scenario::StackDs},
+                {keyText("mem.queueDs.title"), Scenario::QueueDs},
+                {keyText("mem.linkedList.title"), Scenario::LinkedList}};
     }
 
     QList<ScenarioItem> concurrencyItems()
     {
-        return {{"Thread + Mutex", Scenario::ThreadMutex},
-                {"Race Condition", Scenario::RaceCondition}};
+        return {{keyText("con.threadMutex.title"), Scenario::ThreadMutex},
+                {keyText("con.race.title"), Scenario::RaceCondition}};
     }
 
     QString modeNameForTab(int index)
@@ -44,15 +51,15 @@ namespace ui::mainwindow
         switch (index)
         {
         case 0:
-            return "Algorithms";
+            return keyText("mode.algorithms");
         case 1:
-            return "Memory";
+            return keyText("mode.memory");
         case 2:
-            return "Concurrency";
+            return keyText("mode.concurrency");
         case 3:
-            return "Data Structures";
+            return keyText("mode.dataStructures");
         default:
-            return "Unknown";
+            return keyText("mode.unknown");
         }
     }
 

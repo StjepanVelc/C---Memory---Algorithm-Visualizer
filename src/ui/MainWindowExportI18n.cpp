@@ -150,8 +150,7 @@ QString MainWindow::translateText(const QString &text) const
         return resolved;
     }
 
-    const QJsonObject textMap = m_i18n.value("textMap").toObject();
-    return textMap.value(text).toString(text);
+    return text;
 }
 
 SimulationFrame MainWindow::localizedFrame(const SimulationFrame &frame) const
