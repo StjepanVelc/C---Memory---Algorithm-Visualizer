@@ -141,6 +141,11 @@ QString MainWindow::translateText(const QString &text) const
     if (i18nkey::isKeyed(text))
     {
         const QString key = i18nkey::key(text);
+        if (!m_i18n.contains(key))
+        {
+            return key;
+        }
+
         QString resolved = t(key, key);
         const QStringList args = i18nkey::args(text);
         for (const auto &arg : args)

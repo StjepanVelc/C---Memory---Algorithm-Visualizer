@@ -95,6 +95,10 @@ void MainWindow::buildUi()
     inputRow->addWidget(m_applyInputButton);
     leftColumn->addLayout(inputRow);
 
+    m_inputGuidanceLabel = new QLabel(this);
+    m_inputGuidanceLabel->setStyleSheet("color:#93c5fd;font-size:12px;");
+    leftColumn->addWidget(m_inputGuidanceLabel);
+
     auto *rightColumn = new QVBoxLayout();
     auto *backButton = new QPushButton("Step Back", this);
     auto *nextButton = new QPushButton("Step Forward", this);

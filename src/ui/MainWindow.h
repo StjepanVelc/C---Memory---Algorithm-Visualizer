@@ -51,6 +51,7 @@ private:
     void refreshView();
     void loadScenariosForCurrentTab();
     void updateTooltipsForMode();
+    void updateInputGuidanceForScenario();
     void maybeShowTutorialOverlay();
     UserScenarioConfig parseUserConfig() const;
     void applyLanguage(const QString &langCode);
@@ -79,6 +80,7 @@ private:
     QLineEdit *m_insertIndexInput = nullptr;
     QLineEdit *m_insertValueInput = nullptr;
     QLineEdit *m_deleteIndexInput = nullptr;
+    QLabel *m_inputGuidanceLabel = nullptr;
     QPushButton *m_applyInputButton = nullptr;
     QPushButton *m_savePresetButton = nullptr;
     QPushButton *m_loadPresetButton = nullptr;

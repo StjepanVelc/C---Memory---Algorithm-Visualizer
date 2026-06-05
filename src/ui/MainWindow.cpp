@@ -13,10 +13,7 @@ MainWindow::MainWindow()
     m_replayTimer.setInterval(250);
 
     buildUi();
-    loadScenariosForCurrentTab();
     applyLanguage(m_langCode);
-    refreshView();
-    updateTooltipsForMode();
 
     connect(&m_playbackTimer, &QTimer::timeout, this, &MainWindow::onPlaybackTick);
     connect(&m_replayTimer, &QTimer::timeout, this, &MainWindow::onReplayTick);
@@ -37,6 +34,7 @@ void MainWindow::onScenarioChanged(int index)
 
     const auto scenario = static_cast<Scenario>(selectedData.toInt());
     m_engine.setScenario(scenario);
+    updateInputGuidanceForScenario();
     if (m_isPlaying)
     {
         onPlayPause();
