@@ -19,8 +19,16 @@ add_executable(CppMemoryAlgorithmVisualizer
     src/core/SimulationTypes.h
     src/core/SimulationEngine.h
     src/core/SimulationEngine.cpp
+    src/core/PresetIO.h
+    src/core/PresetIO.cpp
     src/ui/MainWindow.h
     src/ui/MainWindow.cpp
+    src/ui/MainWindowUi.cpp
+    src/ui/MainWindowActions.cpp
+    src/ui/MainWindowPresetActions.cpp
+    src/ui/MainWindowExportI18n.cpp
+    src/ui/MainWindowSupport.h
+    src/ui/MainWindowSupport.cpp
     src/ui/VisualizationCanvas.h
     src/ui/VisualizationCanvas.cpp
     src/algorithms/AlgorithmSimulator.h
@@ -31,12 +39,34 @@ add_executable(CppMemoryAlgorithmVisualizer
     src/concurrency/ConcurrencySimulator.cpp
 )
 
+enable_testing()
+
+add_executable(SimulatorTests
+    tests/SimulatorTests.cpp
+    src/core/SimulationTypes.h
+    src/core/PresetIO.h
+    src/core/PresetIO.cpp
+    src/algorithms/AlgorithmSimulator.h
+    src/algorithms/AlgorithmSimulator.cpp
+    src/memory/MemorySimulator.h
+    src/memory/MemorySimulator.cpp
+    src/concurrency/ConcurrencySimulator.h
+    src/concurrency/ConcurrencySimulator.cpp
+)
+
+target_include_directories(SimulatorTests PRIVATE src)
+target_link_libraries(SimulatorTests PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets)
+
+add_test(NAME SimulatorTests COMMAND SimulatorTests)
+
 target_link_libraries(CppMemoryAlgorithmVisualizer PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets)
 
 target_include_directories(CppMemoryAlgorithmVisualizer PRIVATE src)
 
 if(MSVC)
     target_compile_options(CppMemoryAlgorithmVisualizer PRIVATE /W4 /permissive-)
+    target_compile_options(SimulatorTests PRIVATE /W4 /permissive-)
 else()
     target_compile_options(CppMemoryAlgorithmVisualizer PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(SimulatorTests PRIVATE -Wall -Wextra -Wpedantic)
 endif()
